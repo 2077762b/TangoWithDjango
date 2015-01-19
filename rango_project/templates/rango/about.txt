@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html>
+
+    This tutorial had been put together by {{ name }} {{ number }} <br/>
+    <a href='/rango/'>Index</a> <br/>
+    <img style="width:50%;height:50%" src="{% static "images/chris.jpg" %}" alt="Picture of Chris" />
+
+</html>
