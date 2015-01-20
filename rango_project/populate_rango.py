@@ -46,6 +46,16 @@ def populate():
         title="Flask",
         url="http://flask.pocoo.org")
 
+    student_cat = add_cat("Chris Brown - 2077762b")
+
+    add_page(cat=student_cat,
+             title="Github",
+             url="https://github.com/2077762b")
+
+    add_page(cat=student_cat,
+             title="PythonAnywhere",
+             url="https://www.pythonanywhere.com/user/2077762b/consoles/")
+
     # Print out what we have added to the user.
     for c in Category.objects.all():
         for p in Page.objects.filter(category=c):
@@ -55,7 +65,7 @@ def add_page(cat, title, url, views=0):
     p = Page.objects.get_or_create(category=cat, title=title, url=url, views=views)[0]
     return p
 
-def add_cat(name, views, likes):
+def add_cat(name, views=0, likes=0):
     c = Category.objects.get_or_create(name=name, views=views, likes=likes)[0]
     return c
 
