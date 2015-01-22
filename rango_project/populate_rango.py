@@ -13,17 +13,17 @@ def populate():
     add_page(cat=python_cat,
         title="Official Python Tutorial",
         url="http://docs.python.org/2/tutorial/",
-        views=100)
+        views=100,)
 
     add_page(cat=python_cat,
         title="How to Think like a Computer Scientist",
         url="http://www.greenteapress.com/thinkpython/",
-        views=99)
+        views=2,)
 
     add_page(cat=python_cat,
         title="Learn Python in 10 Minutes",
         url="http://www.korokithakis.net/tutorials/python/",
-        views=2)
+        views=99,)
 
     django_cat = add_cat("Django",64,32)
 
@@ -71,7 +71,7 @@ def populate():
         for p in Page.objects.filter(category=c):
             print "- {0} - {1}".format(str(c), str(p))
 
-def add_page(cat, title, url, views=0):
+def add_page(cat, title, url, views):
     p = Page.objects.get_or_create(category=cat, title=title, url=url, views=views)[0]
     return p
 

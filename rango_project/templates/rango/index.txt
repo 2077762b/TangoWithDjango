@@ -7,6 +7,7 @@
     <body>
         <h1>Rango says..hello world!</h1>
 
+	Top 5 Most Liked Categories:
         {% if categories %}
             <ul>
                 {% for category in categories %}
@@ -16,11 +17,13 @@
        {% else %}
             <strong>There are no categories present.</strong>
        {% endif %}
+	</br>
 
+	Top 5 Most Viewed Pages:
 	{% if pages %}
             <ul>
                 {% for page in pages %}
-                <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
+                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
                 {% endfor %}
             </ul>
        {% else %}
