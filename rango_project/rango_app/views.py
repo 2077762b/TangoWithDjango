@@ -114,7 +114,7 @@ def user_login(request):
 
     if request.method == 'POST':
         username = request.POST['username']
-        password = request.POST['password']
+        password = request.POST['password']       
 
         user = authenticate(username=username,password=password)
 
@@ -126,7 +126,7 @@ def user_login(request):
                 return HttpResponse("Your Rango account is disabled.")
         else:
             print "Invalid login details: {0}, {1}".format(username, password)
-            return HttpResponse("Invalid login details supplied.")
+            return HttpResponse("Username or password is not valid")
             
     else:
         return render(request, 'rango/login.txt', {})
