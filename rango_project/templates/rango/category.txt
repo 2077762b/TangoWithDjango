@@ -16,8 +16,11 @@
             {% else %}
                 <strong>No pages currently in category.</strong>
             {% endif %}
-	</br>
-	<a href="/rango/category/{{ category_name_slug }}/add_page/">Add a New page</a>
+			{% if user.is_authenticated %}
+				<form action="/rango/category/{{ category_name_slug }}/add_page/">
+					<input type="submit" value="Add a new page">
+				</form>
+			{% endif %}
         {% else %}
             The specified category {{ category_name }} does not exist!
         {% endif %}

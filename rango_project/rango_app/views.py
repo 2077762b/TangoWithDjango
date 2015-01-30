@@ -4,6 +4,10 @@ from rango_app.models import Page
 from rango_app.forms import CategoryForm
 from rango_app.forms import PageForm
 from rango_app.forms import UserForm, UserProfileForm
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 from django.http import HttpResponse
 
@@ -33,6 +37,7 @@ def category(request, category_name_slug):
         pass
     return render(request, 'rango/category.txt', context_dict)
 
+@login_required
 def add_category(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
@@ -46,6 +51,7 @@ def add_category(request):
         form = CategoryForm()
     return render(request, 'rango/add_category.txt', {'form': form})
 
+@login_required
 def add_page(request, category_name_slug):
     try:
         cat = Category.objects.get(slug=category_name_slug)
@@ -103,3 +109,33 @@ def register(request):
     return render(request,
             'rango/register.txt',
             {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
+			
+def user_login(request):
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(username=username,password=password)
+
+        if user:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect('/rango/')
+            else:
+                return HttpResponse("Your Rango account is disabled.")
+        else:
+            print "Invalid login details: {0}, {1}".format(username, password)
+            return HttpResponse("Invalid login details supplied.")
+            
+    else:
+        return render(request, 'rango/login.txt', {})
+
+@login_required
+def restricted(request):
+    return HttpResponse("Since you're logged in, you can see this text!")
+	
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect('/rango/')
