@@ -16,11 +16,11 @@ def index(request):
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
     context_dict = {'categories': category_list,'pages':page_list}
-    return render(request, 'rango/index.txt', context_dict)
+    return render(request, 'rango/index.html', context_dict)
 
 def about(request):
     context_dict = {'name': "Chris Brown", 'number': "2077762b" }
-    return render(request, 'rango/about.txt', context_dict)
+    return render(request, 'rango/about.html', context_dict)
 
 def category(request, category_name_slug):
 
@@ -35,7 +35,7 @@ def category(request, category_name_slug):
         context_dict['category_name_slug'] = category_name_slug
     except Category.DoesNotExist:
         pass
-    return render(request, 'rango/category.txt', context_dict)
+    return render(request, 'rango/category.html', context_dict)
 
 @login_required
 def add_category(request):
@@ -49,7 +49,7 @@ def add_category(request):
             print form.errors
     else:
         form = CategoryForm()
-    return render(request, 'rango/add_category.txt', {'form': form})
+    return render(request, 'rango/add_category.html', {'form': form})
 
 @login_required
 def add_page(request, category_name_slug):
@@ -74,7 +74,7 @@ def add_page(request, category_name_slug):
 
     context_dict = {'form':form, 'category': cat, 'category_name_slug':category_name_slug }
 
-    return render(request, 'rango/add_page.txt', context_dict)
+    return render(request, 'rango/add_page.html', context_dict)
 	
 def register(request):
 
@@ -107,7 +107,7 @@ def register(request):
         profile_form = UserProfileForm()
 
     return render(request,
-            'rango/register.txt',
+            'rango/register.html',
             {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
 			
 def user_login(request):
@@ -129,7 +129,7 @@ def user_login(request):
             return HttpResponse("Username or password is not valid")
             
     else:
-        return render(request, 'rango/login.txt', {})
+        return render(request, 'rango/login.html', {})
 
 @login_required
 def restricted(request):

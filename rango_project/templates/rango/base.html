@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Rango - {% block title %}How to Tango with Django!{% endblock %}</title>
+    </head>
+
+    <body>
+        <div>
+            {% block body_block %}{% endblock %}
+        </div>
+
+        <hr />
+
+        <div>
+            	<form action="/rango/about/">
+			<input type="submit" value="About">
+		</form>
+	{% if user.is_authenticated %}
+		<form action="/rango/add_category/">
+			<input type="submit" value="Add a new Category">
+		</form>
+		
+		<form action="/rango/restricted/">
+			<input type="submit" value="Restricted Page">
+		</form>
+	
+		<form action="/rango/logout/">
+			<input type="submit" value="Logout">
+		</form>
+	{% else %}
+		<form action="/rango/register/">
+			<input type="submit" value="Register Here">
+		</form>
+		<form action="/rango/login/">
+			<input type="submit" value="Login">
+		</form>
+	{% endif %}
+        </div>
+    </body>
+</html>
