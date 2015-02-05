@@ -1,5 +1,7 @@
-<!DOCTYPE html>
-<html>
+{% extends 'rango/base.html' %}
+
+{% block body_block %}
+
     <head>
         <title>Rango</title>
     </head>
@@ -34,29 +36,7 @@
             <strong>There are no pages present.</strong>
        {% endif %}
 
-	<form action="{% url 'about' %}">
-		<input type="submit" value="About">
-	</form>
-	{% if user.is_authenticated %}
-		<form action="{% url 'add_category' %}">
-			<input type="submit" value="Add a new Category">
-		</form>
-		
-		<form action="{% url 'restricted' %}">
-			<input type="submit" value="Restricted Page">
-		</form>
-	
-		<form action="{% url 'logout' %}">
-			<input type="submit" value="Logout">
-		</form>
-	{% else %}
-		<form action="{% url 'register' %}">
-			<input type="submit" value="Register Here">
-		</form>
-		<form action="{% url 'login' %}">
-			<input type="submit" value="Login">
-		</form>
-	{% endif %}
+{% endblock %}	
 
     </body>
 </html>
