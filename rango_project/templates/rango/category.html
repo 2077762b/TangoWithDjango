@@ -10,18 +10,20 @@
         {% if pages %}
         <ul>
                 {% for page in pages %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+					<li><a href="{{ page.url }}">{{ page.title }}</a></li>
                 {% endfor %}
-                </ul>
+        </ul>
         {% else %}
                 <strong>No pages currently in category.</strong>
-                {% endif %}
+        {% endif %}
 
         {% if user.is_authenticated %}
-                <a href="/rango/category/{{category.slug}}/add_page/">Add a Page</a>
-                {% endif %}
+				<form action="/rango/category/{{category.slug}}/add_page/">
+					<input type="submit" value="Add a Page">
+				</form>
+        {% endif %}
         {% else %}
-                 The specified category {{ category_name }} does not exist!
-    {% endif %}
+                The specified category {{ category_name }} does not exist!
+	{% endif %}
 
 {% endblock %}
