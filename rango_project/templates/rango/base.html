@@ -13,34 +13,42 @@
         <hr />
 
         <div>
-		<form action="{% url 'index' %}">
-			<input type="submit" value="Index">
-		</form>
+		{% if page_name != 'index' %}
+			<form action="{% url 'index' %}">
+				<input type="submit" value="Index">
+			</form>
+		{% endif %}
+		{% if page_name != 'about' %}
+			<form action="{% url 'about' %}">
+				<input type="submit" value="About">
+			</form>
+		{% endif %}
 		
-        <form action="{% url 'about' %}">
-			<input type="submit" value="About">
-		</form>
-		
-		
-	{% if user.is_authenticated %}
-		<form action="{% url 'add_category' %}">
-			<input type="submit" value="Add a new Category">
-		</form>
-		
-		<form action="{% url 'restricted' %}">
-			<input type="submit" value="Restricted Page">
-		</form>
-	
-		<form action="{% url 'logout' %}">
-			<input type="submit" value="Logout">
-		</form>
+		{% if user.is_authenticated %}
+			{% if page_name != 'add_category' %}
+				<form action="{% url 'add_category' %}">
+					<input type="submit" value="Add a new Category">
+				</form>
+			{% endif %}
+			{% if page_name != 'restricted' %}
+				<form action="{% url 'restricted' %}">
+					<input type="submit" value="Restricted Page">
+			</form>
+			{% endif %}
+			<form action="{% url 'logout' %}">
+				<input type="submit" value="Logout">
+			</form>
 	{% else %}
-		<form action="{% url 'register' %}">
-			<input type="submit" value="Register Here">
-		</form>
-		<form action="{% url 'login' %}">
-			<input type="submit" value="Login">
-		</form>
+		{% if page_name != 'register' %}
+			<form action="{% url 'register' %}">
+				<input type="submit" value="Register Here">
+			</form>
+		{% endif %}
+		{% if page_name != 'login' %}
+			<form action="{% url 'login' %}">
+				<input type="submit" value="Login">
+			</form>
+		{% endif %}
 	{% endif %}
         </div>
     </body>

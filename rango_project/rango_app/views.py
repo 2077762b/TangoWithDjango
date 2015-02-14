@@ -8,20 +8,55 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from datetime import datetime
 
 from django.http import HttpResponse
 
 def index(request):
-   
+
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
-    context_dict = {'categories': category_list,'pages':page_list}
-    return render(request, 'rango/index.html', context_dict)
+
+    context_dict = {'categories': category_list, 'pages': page_list}
+
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 1
+    reset_last_visit_time = False
+
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+        if (datetime.now() - last_visit_time).seconds > 0:
+            # ...reassign the value of the cookie to +1 of what it was before...
+            visits = visits + 1
+            # ...and update the last visit cookie, too.
+            reset_last_visit_time = True
+    else:
+        # Cookie last_visit doesn't exist, so create it to the current date/time.
+        reset_last_visit_time = True
+
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.now())
+        request.session['visits'] = visits
+    context_dict['visits'] = visits
+
+
+    response = render(request,'rango/index.html', context_dict)
+
+    return response
+
 
 def about(request):
-    context_dict = {'name': "Chris Brown", 'number': "2077762b" }
-    return render(request, 'rango/about.html', context_dict)
+    if request.session.get('visits'):
+        count = request.session.get('visits')
+    else:
+        count = 0
 
+    context_dict = {'name': "Chris Brown", 'number': "2077762b", 'page_name' : 'about', 'visits': count }
+    return render(request, 'rango/about.html', context_dict)
+	
 def category(request, category_name_slug):
 
     context_dict = {}
@@ -33,6 +68,7 @@ def category(request, category_name_slug):
         context_dict['pages'] = pages
         context_dict['category'] = category
         context_dict['category_name_slug'] = category_name_slug
+	context_dict['page_name'] = category
     except Category.DoesNotExist:
         pass
     return render(request, 'rango/category.html', context_dict)
@@ -49,7 +85,7 @@ def add_category(request):
             print form.errors
     else:
         form = CategoryForm()
-    return render(request, 'rango/add_category.html', {'form': form})
+    return render(request, 'rango/add_category.html', {'form': form, 'page_name' : 'add_category'})
 
 @login_required
 def add_page(request, category_name_slug):
@@ -72,7 +108,7 @@ def add_page(request, category_name_slug):
     else:
         form = PageForm()
 
-    context_dict = {'form':form, 'category': cat, 'category_name_slug':category_name_slug }
+    context_dict = {'form':form, 'category': cat, 'category_name_slug':category_name_slug, 'page_name' : 'add_page'}
 
     return render(request, 'rango/add_page.html', context_dict)
 	
@@ -108,7 +144,7 @@ def register(request):
 
     return render(request,
             'rango/register.html',
-            {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
+            {'user_form': user_form, 'profile_form': profile_form, 'registered': registered, 'page_name' : 'register'} )
 			
 def user_login(request):
 
@@ -129,11 +165,11 @@ def user_login(request):
             return HttpResponse("Username or password is not valid")
             
     else:
-        return render(request, 'rango/login.html', {})
+        return render(request, 'rango/login.html', {'page_name' : 'login'})
 
 @login_required
 def restricted(request):
-	return render(request, 'rango/restricted.html', {})
+	return render(request, 'rango/restricted.html', { 'page_name' : 'restricted'})
 	
 @login_required
 def user_logout(request):
