@@ -35,21 +35,24 @@
 					<input type="submit" value="Restricted Page">
 			</form>
 			{% endif %}
+			<form action="{% url 'auth_password_change' %}?next=/rango/">
+				<input type="submit" value="Change Password">
+			</form>
 			<form action="{% url 'auth_logout' %}?next=/rango/">
 				<input type="submit" value="Logout">
 			</form>
-	{% else %}
-		{% if page_name != 'registration register' %}
-			<form action="{% url 'registration_register' %}">
-				<input type="submit" value="Register Here">
-			</form>
+		{% else %}
+			{% if page_name != 'registration register' %}
+				<form action="{% url 'registration_register' %}">
+					<input type="submit" value="Register Here">
+				</form>
+			{% endif %}
+			{% if page_name != 'login' %}
+				<form action="{% url 'auth_login' %}">
+					<input type="submit" value="Login">
+				</form>
+			{% endif %}
 		{% endif %}
-		{% if page_name != 'login' %}
-			<form action="{% url 'auth_login' %}">
-				<input type="submit" value="Login">
-			</form>
-		{% endif %}
-	{% endif %}
         </div>
     </body>
 </html>
