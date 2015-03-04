@@ -1,0 +1,21 @@
+{% extends 'rango/base.html' %}
+
+{% block title %}Edit Email{% endblock %}
+
+{% block body_block %}
+	<h2 class="form-signin-heading">Edit Email</h2>
+	<form id="profile_form" method="post" action="/rango/add_profile/"
+			enctype="multipart/form-data">
+
+		{% csrf_token %}
+
+		<!-- Display each form. The as_p method wraps each element in a paragraph
+			 (<p>) element. This ensures each element appears on a new line,
+			 making everything look neater. -->
+		{{ profile_form.as_p }}
+
+		<!-- Provide a button to click to submit the form. -->
+		</br>
+		<button class="btn btn-primary"  type="submit" name="submit">Create Profile</button>
+		
+<% endblock %>

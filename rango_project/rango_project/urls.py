@@ -6,7 +6,7 @@ from django.contrib.auth.views import password_reset
 
 class MyRegistrationView(RegistrationView):
     def get_success_url(selfself,request, user):
-        return '/rango/'
+        return '/rango/add_profile'
 		
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),

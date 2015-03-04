@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rango_app.models import Category
+from rango_app.models import Category, UserProfile
 from rango_app.models import Page
 from rango_app.forms import CategoryForm
 from rango_app.forms import PageForm
@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from datetime import datetime
 from rango_app.bing_search import run_query
+from django.shortcuts import redirect
 
 from django.http import HttpResponse
 
@@ -59,21 +60,33 @@ def about(request):
     return render(request, 'rango/about.html', context_dict)
 	
 def category(request, category_name_slug):
-
     context_dict = {}
+    context_dict['result_list'] = None
+    context_dict['query'] = None
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+
+        if query:
+            # Run our Bing function to get the results list!
+            result_list = run_query(query)
+
+            context_dict['result_list'] = result_list
+            context_dict['query'] = query
 
     try:
         category = Category.objects.get(slug=category_name_slug)
         context_dict['category_name'] = category.name
-        pages = Page.objects.filter(category=category)
+        pages = Page.objects.filter(category=category).order_by('-views')
         context_dict['pages'] = pages
         context_dict['category'] = category
-        context_dict['category_name_slug'] = category_name_slug
-	context_dict['page_name'] = category
     except Category.DoesNotExist:
         pass
-    return render(request, 'rango/category.html', context_dict)
 
+    if not context_dict['query']:
+        context_dict['query'] = category.name
+
+    return render(request, 'rango/category.html', context_dict)
+	
 @login_required
 def add_category(request):
     if request.method == 'POST':
@@ -189,3 +202,68 @@ def search(request):
                     result_list = run_query(query)
 
     return render(request, 'rango/search.html', {'result_list': result_list})
+
+def track_url(request):
+    page_id = None
+    url = '/rango/'
+    if request.method == 'GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            try:
+                page = Page.objects.get(id=page_id)
+                page.views = page.views + 1
+                page.save()
+                url = page.url
+            except:
+                pass
+
+    return redirect(url)
+
+def register_profile(request):
+    completed = False
+
+    if request.method == 'POST':
+       
+        profile_form = UserProfileForm(data=request.POST)
+
+        if profile_form.is_valid():
+            profile = profile_form.save(commit=False)
+	    user = request.user
+            profile.user = user
+
+            if 'picture' in request.FILES:
+                profile.picture = request.FILES['picture']
+
+            profile.save()
+            completed = True
+
+        else:
+            print profile_form.errors
+
+    else:
+        profile_form = UserProfileForm()
+
+    return render(request,
+            'rango/profile_registration.html',
+            {'profile_form': profile_form, 'completed': completed} )
+			
+def profile(request):
+	user = request.user 
+	context_dict = {}
+	context_dict['user'] = user
+	profile = UserProfile.objects.get(user=user)
+	context_dict['profile'] = profile
+	return render(request, 'rango/profile.html', context_dict)
+	
+def edit_email(request):
+	user = request.user
+	context_dict = {}
+	profile = UserProfile.objects.get(user=user)
+	if request.method == 'POST':
+	    data = request.post
+            profile.website = data
+            profile.save()
+
+        else:
+            context_dict['profile'] = profile
+	return render(request, 'rango/edit_email.html', context_dict)
