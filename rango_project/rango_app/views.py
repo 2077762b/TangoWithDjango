@@ -11,6 +11,7 @@ from django.contrib.auth import logout
 from datetime import datetime
 from rango_app.bing_search import run_query
 from django.shortcuts import redirect
+from django.contrib.auth.models import User
 
 from django.http import HttpResponse
 
@@ -220,50 +221,55 @@ def track_url(request):
     return redirect(url)
 
 def register_profile(request):
-    completed = False
+	completed = False
+	if request.method == 'POST':
+		try:
+			profile = UserProfile.objects.get(user=request.user)
+			profile_form = UserProfileForm(request.POST, instance=profile)
+		except:
+			profile_form = UserProfileForm(request.POST)
+		if profile_form.is_valid():
+			if request.user.is_authenticated():
+				profile = profile_form.save(commit=False)
+				user = request.user
+				profile.user = user
+				try:
+					profile.picture = request.FILES['picture']
+				except:
+					pass
+				profile.save()
+				completed = True
+		else:
+			print profile_form.errors
+		return index(request)
+	else:
+		profile_form = UserProfileForm(request.GET)
+	return render(request, 'rango/profile_registration.html', {'profile_form': profile_form, 'completed': completed})
 
-    if request.method == 'POST':
-       
-        profile_form = UserProfileForm(data=request.POST)
 
-        if profile_form.is_valid():
-            profile = profile_form.save(commit=False)
-	    user = request.user
-            profile.user = user
-
-            if 'picture' in request.FILES:
-                profile.picture = request.FILES['picture']
-
-            profile.save()
-            completed = True
-
-        else:
-            print profile_form.errors
-
-    else:
-        profile_form = UserProfileForm()
-
-    return render(request,
-            'rango/profile_registration.html',
-            {'profile_form': profile_form, 'completed': completed} )
-			
+@login_required			
 def profile(request):
 	user = request.user 
 	context_dict = {}
 	context_dict['user'] = user
-	profile = UserProfile.objects.get(user=user)
+	try:
+		profile = UserProfile.objects.get(user=user)
+	except:
+		profile = None
 	context_dict['profile'] = profile
 	return render(request, 'rango/profile.html', context_dict)
 	
-def edit_email(request):
-	user = request.user
+def users(request):
 	context_dict = {}
+	profiles = UserProfile.objects.all()
+	context_dict['profiles'] = profiles
+	return render(request, 'rango/users.html', context_dict)
+	
+def view_profile(request, profile_name):
+	context_dict = {}
+	user = User.objects.get(username=profile_name)
+	context_dict['user'] = user
 	profile = UserProfile.objects.get(user=user)
-	if request.method == 'POST':
-	    data = request.post
-            profile.website = data
-            profile.save()
-
-        else:
-            context_dict['profile'] = profile
-	return render(request, 'rango/edit_email.html', context_dict)
+	context_dict['profile'] = profile
+	return render(request, 'rango/view_profile.html', context_dict)
+	

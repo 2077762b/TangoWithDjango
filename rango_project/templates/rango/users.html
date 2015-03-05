@@ -1,0 +1,17 @@
+{% extends 'rango/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Users{% endblock %}
+
+{% block body_block %}
+	{% if profiles %}
+		<ul>
+        {% for UserProfile in profiles %}
+			<li>
+				<a href="{% url 'view_profile' UserProfile.user %}">{{UserProfile.user}}</a>	
+			</li>
+		{% endfor %}
+		</ul>
+	{% endif %}
+{% endblock %}
