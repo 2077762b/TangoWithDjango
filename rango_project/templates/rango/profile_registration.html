@@ -2,14 +2,14 @@
 
 {% load staticfiles %}
 
-{% block title %}Profile Registration{% endblock %}
+{% block title %}User Profile{% endblock %}
 
 {% block body_block %}
 {% if completed %}
     <strong>Thank you for completing the user profile</strong>
     <a href="/rango/">Return to the homepage.</a><br />
 {% else %}
-	<h2 class="form-signin-heading">Create a User Profile</h2>
+	<h2 class="form-signin-heading">User Profile</h2>
 	</br>
 
 	<form id="profile_form" method="post" action="/rango/register_profile/"
